@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Bilgi Yarışması 🎈</title>
+
+<style>
+body {
+    font-family: "Comic Sans MS", cursive;
+    background: linear-gradient(135deg, #ffecd2, #fcb69f, #a1c4fd);
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    width: 95%;
+    max-width: 700px;
+    text-align: center;
+    position: relative;
+}
+
+.top-left {
+    position: absolute;
+    top: -30px;
+    left: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.box {
+    background: white;
+    padding: 25px;
+    border-radius: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.timer { font-size: 20px; }
+
+.bar {
+    height: 10px;
+    background: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 10px 0 20px;
+}
+
+.progress {
+    height: 100%;
+    width: 100%;
+    background: #ff4d6d;
+    transition: width 1s linear;
+}
+
+.answers button {
+    width: 100%;
+    padding: 18px;
+    margin: 10px 0;
+    font-size: 20px;
+    border: none;
+    border-radius: 15px;
+}
+
+.a { background: #ffd166; }
+.b { background: #06d6a0; }
+
+.team {
+    margin-top: 15px;
+}
+
+.team button {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+}
+
+.selectA { background: #ffd166; }
+.selectB { background: #06d6a0; }
+
+.selected {
+    outline: 4px solid black;
+}
+
+.feedback {
+    margin-top: 10px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.next-btn {
+    margin-top: 15px;
+    padding: 12px 25px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    background: #ff4d6d;
+    color: white;
+    cursor: pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+
+
+<div class="container">
+
+<div class="top-left" id="qinfo">Soru 1 / 20</div>
+
+<div class="box">
+
+<div class="timer">⏳ Süre: <span id="time">30</span></div>
+<div class="bar"><div class="progress" id="progress"></div></div>
+
+<h2 id="question"></h2>
+
+<div class="answers">
+    <button class="a" id="a"></button>
+    <button class="b" id="b"></button>
+</div>
+
+<div class="team">
+    <h3>1. Takım</h3>
+    <button class="selectA" onclick="choose(1,0)">A</button>
+    <button class="selectB" onclick="choose(1,1)">B</button>
+</div>
+
+<div class="team">
+    <h3>2. Takım</h3>
+    <button class="selectA" onclick="choose(2,0)">A</button>
+    <button class="selectB" onclick="choose(2,1)">B</button>
+</div>
+
+<div class="feedback" id="feedback"></div>
+
+<button class="next-btn" onclick="nextQuestion()">İleri ➡️</button>
+
+</div>
+</div>
+
+<audio id="trueSound" src="true.mp3"></audio>
+<audio id="falseSound" src="false.mp3"></audio>
+<audio id="finishSound" src="conq.mp3"></audio>
+
+<script>
+const questions = [
+    {q:"Gökyüzü ne renktir?", a:["A) Mavi","B) Kırmızı"], correct:0},
+    {q:"Yemek yemeden önce ellerimizi neyle yıkamalıyız?", a:["A) Sadece suyla","B) Su ve sabunla"], correct:1},
+    {q:"Trafik lambasında 'Dur' anlamına gelen renk hangisidir?", a:["A) Yeşil","B) Kırmızı"], correct:1},
+    {q:"Gece gökyüzünde hangisini görürüz?", a:["A) Ay ve yıldızlar","B) Gökkuşağı"], correct:0},
+    {q:"İki elimizde toplam kaç parmağımız vardır?", a:["A) 10","B) 5"], correct:0},
+    {q:"Tavşanlar en çok hangi sebzeyi yemeyi sever?", a:["A) Patlıcan","B) Havuç"], correct:1},
+    {q:"Gündüzleri dünyamızı aydınlatan en büyük ışık kaynağı nedir?", a:["A) Güneş","B) Lamba"], correct:0},
+    {q:"Yağmur yağarken ıslanmamak için ne kullanırız?", a:["A) Güneş gözlüğü","B) Şemsiye"], correct:1},
+    {q:"Okulda öğretmenimiz konuşurken ne yapmalıyız?", a:["A) Sessizce dinlemeliyiz","B) Şarkı söylemeliyiz"], correct:0},
+    {q:"Hangisi daha büyüktür?", a:["A) Fil","B) Karınca"], correct:0},
+    {q:"İneklerden hangi içeceği elde ederiz?", a:["A) Meyve suyu","B) Süt"], correct:1},
+    {q:"Hangisi yuvarlak bir şekle sahiptir?", a:["A) Top","B) Kitap"], correct:0},
+    {q:"Çöplerimizi nereye atmalıyız?", a:["A) Çöp kutusuna","B) Yere"], correct:0},
+    {q:"Bir fidanın kocaman bir ağaç olması için hangisine ihtiyacı vardır?", a:["A) Su ve güneş","B) Oyuncak ve kitap"], correct:0},
+    {q:"Hangisi bir 'meslek' eşleşmesidir?", a:["A) Doktor - Hastane","B) Balık - Orman"], correct:0},
+    {q:"Hangi hayvanın vücudu sert bir kabukla korunur?", a:["A) Kaplumbağa","B) Kuzu"], correct:0},
+    {q:"Hangisi daha 'ağır' bir eşyadır?", a:["A) Buzdolabı","B) Pamuk"], correct:0},
+    {q:"Bir elinde 2 elma, diğer elinde de 1 elma varsa toplam kaç elman olur?", a:["A) 3","B) 5"], correct:0},
+    {q:"Sarı - Kırmızı - Sarı - Kırmızı... Bu dizide sıradaki renk hangisi olmalıdır?", a:["A) Sarı","B) Kırmızı"], correct:0},
+    {q:"Hangisi geri dönüştürülebilir bir atıktır?", a:["A) Elma kabuğu","B) Kağıt ve plastik şişe"], correct:1}
+];
+
+let current = 0;
+let team1 = null;
+let team2 = null;
+let score1 = 0;
+let score2 = 0;
+let timer;
+let timeLeft = 30;
+
+function loadQuestion(){
+    team1 = null;
+    team2 = null;
+    document.getElementById("feedback").innerText="";
+
+    document.getElementById("qinfo").innerText = `Soru ${current+1} / ${questions.length}`;
+
+    document.getElementById("question").innerText = questions[current].q;
+    document.getElementById("a").innerText = questions[current].a[0];
+    document.getElementById("b").innerText = questions[current].a[1];
+
+    clearSelectionUI();
+
+    timeLeft = 30;
+    document.getElementById("time").innerText = timeLeft;
+    document.getElementById("progress").style.width = "100%";
+
+    clearInterval(timer);
+    timer = setInterval(()=>{
+        timeLeft--;
+        document.getElementById("time").innerText = timeLeft;
+        document.getElementById("progress").style.width = (timeLeft*(100/30))+"%";
+        if(timeLeft<=0) clearInterval(timer);
+    },1000);
+}
+
+function choose(team, choice){
+    if(team===1){
+        team1 = choice;
+        highlight(1,choice);
+    } else {
+        team2 = choice;
+        highlight(2,choice);
+    }
+}
+
+function highlight(team,choice){
+    let buttons = document.querySelectorAll(".team")[team-1].querySelectorAll("button");
+    buttons.forEach(b=>b.classList.remove("selected"));
+    buttons[choice].classList.add("selected");
+}
+
+function clearSelectionUI(){
+    document.querySelectorAll(".team button").forEach(b=>b.classList.remove("selected"));
+}
+
+function nextQuestion(){
+    if(team1===null || team2===null){
+        document.getElementById("feedback").innerText="Takımlar seçim yapsın 😊";
+        return;
+    }
+
+    clearInterval(timer);
+
+    let correct = questions[current].correct;
+
+    if(team1===correct) score1++;
+    if(team2===correct) score2++;
+
+    document.getElementById("feedback").innerText = "Doğru cevap: " + (correct===0 ? "A" : "B");
+
+    if(team1===correct || team2===correct){
+        document.getElementById("trueSound").play();
+    } else {
+        document.getElementById("falseSound").play();
+    }
+
+    setTimeout(()=>{
+        current++;
+        if(current < questions.length){
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    },1500);
+}
+
+function showResult(){
+    document.getElementById("finishSound").play();
+
+    let winner = score1>score2 ? "1. Takım 🥇" : "2. Takım 🥇";
+
+    document.querySelector(".box").innerHTML = `
+        <h2>🎉 Oyun Bitti!</h2>
+        <p>1. Takım: ${score1} ⭐</p>
+        <p>2. Takım: ${score2} ⭐</p>
+        <h3>Kazanan: ${winner}</h3>
+    `;
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
