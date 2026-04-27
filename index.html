@@ -2,17 +2,30 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Bilgi Yarışması 🎈</title>
 
 <style>
+html {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
 body {
     font-family: "Comic Sans MS", cursive;
     background: linear-gradient(135deg, #ffecd2, #fcb69f, #a1c4fd);
-    height: 100vh;
+    min-height: 100vh;
+    min-height: 100dvh;
     margin: 0;
+    padding: 10px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
+    box-sizing: border-box;
+}
+
+* {
+    box-sizing: inherit;
 }
 
 .container {
@@ -20,24 +33,27 @@ body {
     max-width: 700px;
     text-align: center;
     position: relative;
+    padding-top: 40px;
 }
 
 .top-left {
     position: absolute;
-    top: -30px;
-    left: 10px;
-    font-size: 20px;
+    top: 0;
+    left: 0;
+    font-size: clamp(14px, 4vw, 20px);
     font-weight: bold;
 }
 
 .box {
     background: white;
-    padding: 25px;
-    border-radius: 25px;
+    padding: clamp(15px, 5vw, 25px);
+    border-radius: clamp(15px, 5vw, 25px);
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-.timer { font-size: 20px; }
+.timer {
+    font-size: clamp(16px, 4.5vw, 20px);
+}
 
 .bar {
     height: 10px;
@@ -56,11 +72,12 @@ body {
 
 .answers button {
     width: 100%;
-    padding: 18px;
-    margin: 10px 0;
-    font-size: 20px;
+    padding: clamp(14px, 4vw, 18px);
+    margin: 8px 0;
+    font-size: clamp(16px, 4.5vw, 20px);
     border: none;
     border-radius: 15px;
+    touch-action: manipulation;
 }
 
 .a { background: #ffd166; }
@@ -70,12 +87,18 @@ body {
     margin-top: 15px;
 }
 
+.team h3 {
+    font-size: clamp(16px, 4.5vw, 18px);
+    margin: 10px 0;
+}
+
 .team button {
-    padding: 10px 20px;
+    padding: clamp(10px, 3vw, 10px) clamp(16px, 4vw, 20px);
     margin: 5px;
-    font-size: 18px;
+    font-size: clamp(14px, 4vw, 18px);
     border: none;
     border-radius: 10px;
+    touch-action: manipulation;
 }
 
 .selectA { background: #ffd166; }
@@ -87,19 +110,30 @@ body {
 
 .feedback {
     margin-top: 10px;
-    font-size: 22px;
+    font-size: clamp(18px, 5vw, 22px);
     font-weight: bold;
 }
 
 .next-btn {
     margin-top: 15px;
-    padding: 12px 25px;
-    font-size: 18px;
+    padding: clamp(12px, 3.5vw, 12px) clamp(20px, 6vw, 25px);
+    font-size: clamp(16px, 4.5vw, 18px);
     border: none;
     border-radius: 10px;
     background: #ff4d6d;
     color: white;
     cursor: pointer;
+    touch-action: manipulation;
+}
+
+@media (max-width: 400px) {
+    .container {
+        padding-top: 35px;
+    }
+
+    .team {
+        margin-top: 12px;
+    }
 }
 </style>
 
